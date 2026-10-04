@@ -1,0 +1,79 @@
+[
+  {
+    "name": "babel-core",
+    "version": "6.26.3",
+    "license": "MIT",
+    "source_file": "js/babel-core-6.26.3.tgz",
+    "source_sha256": "9c47b182a780f399fa0e1ce666044db5b8bb4715fbe07ab4e1b3cd0b1d043588",
+    "notices": [
+      {
+        "path": "licenses/embedded-js/babel-core-6.26.3/LICENSE",
+        "sha256": "f533455c5981c9213689ee68bcc54fb717d8396739781b7e30c344e94323d752"
+      }
+    ],
+    "license_source": "https://raw.githubusercontent.com/babel/babel/v6.26.0/LICENSE (Babel 6 upstream MIT original; npm babel-core 6.26.3 omits this file)"
+  },
+  {
+    "name": "@babel/helpers",
+    "version": "7.27.6",
+    "license": "MIT",
+    "source_file": "js/babel-helpers-7.27.6.tgz",
+    "source_sha256": "4ad82da1cf87bd4ba3a85ec827189ed44fa0968acff21e1f98e33d278af4ec5e",
+    "notices": [
+      {
+        "path": "licenses/embedded-js/babel-helpers-7.27.6/LICENSE",
+        "sha256": "4be9d87b56a306293223b490c0d0b245e9e94f39884147bf051a6c7b825aeb30"
+      }
+    ]
+  },
+  {
+    "name": "browser-pack",
+    "version": "6.1.0",
+    "license": "MIT",
+    "source_file": "js/browser-pack-6.1.0.tgz",
+    "source_sha256": "13db68f814f0b0b943de116b36eee620f23eb857fba80c342791288cf0320dd1",
+    "notices": [
+      {
+        "path": "licenses/embedded-js/browser-pack-6.1.0/LICENSE",
+        "sha256": "435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b"
+      }
+    ]
+  },
+  {
+    "name": "umd",
+    "version": "3.0.3",
+    "license": "MIT",
+    "source_file": "js/umd-3.0.3.tgz",
+    "source_sha256": "d4af77eb6e785d8a8a5b1ffc67490807d13b432aad1a222466d8270384b8ef91",
+    "notices": [
+      {
+        "path": "licenses/embedded-js/umd-3.0.3/LICENSE",
+        "sha256": "5519d0442a0d5e5e17fd32cd8ffd6d19581964509eb94c5b6ef56c363f5fbd17"
+      }
+    ]
+  },
+  {
+    "name": "web-worker",
+    "version": "1.4.1",
+    "license": "Apache-2.0",
+    "source_file": "js/web-worker-1.4.1.tgz",
+    "source_sha256": "2428aa784a2353191525dfcd079eeb8aef3a179dc285ff6274908d51d41017c0",
+    "notices": [
+      {
+        "path": "licenses/embedded-js/web-worker-1.4.1/LICENSE",
+        "sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1"
+      }
+    ]
+  },
+  {
+    "name": "web-worker browser shim in elkjs",
+    "version": "elkjs 0.9.3 (upstream range ^1.0.0; exact shim version not recorded)",
+    "license": "Apache-2.0",
+    "notices": [
+      {
+        "path": "licenses/embedded-js/web-worker-legacy-in-elkjs-0.9.3.txt",
+        "sha256": "7f0ae3c91e7311b5b0d3639cddc4d0b4ffe12db40fb7631ef8a70ee386bd6e37"
+      }
+    ]
+  }
+]

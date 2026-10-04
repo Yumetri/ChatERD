@@ -1,0 +1,6 @@
+interface:
+  display_name: "DB 그림 편집"
+  short_description: "지정한 Mermaid ERD를 지시대로 수정하고 실제 이미지를 검수해 저장"
+  default_prompt: "$db-draw로 내가 지정한 스키마를 요청대로 수정하고 그림을 검수해줘."
+policy:
+  allow_implicit_invocation: false

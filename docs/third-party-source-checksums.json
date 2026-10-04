@@ -1,0 +1,142 @@
+[
+  {
+    "file": "Apache-2.0.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  {
+    "file": "EPL-1.0.html",
+    "sha256": "a40741b59364cc49449255e9b9bfe1fcfe6a2e7ab4d37ca89db3bacbfb14e9d2"
+  },
+  {
+    "file": "elk-0.11.0.tar.gz",
+    "sha256": "0117f01ecca1378a2290b5eaa0264640fd9858f58a8ddfe2750dcedd1157b81b"
+  },
+  {
+    "file": "elk-0.9.1.tar.gz",
+    "sha256": "51212e3edb105296e2ec8e288e6097d3fc124d25af98a5a64f09655aa1fca842"
+  },
+  {
+    "file": "elk-955.diff",
+    "sha256": "77199cb3428c5c635932dedcd96d250f6e1b91483559eaa3d8179977ad2b8f71"
+  },
+  {
+    "file": "elk-955.patch",
+    "sha256": "7f204a6e304031b7898dca1f09865d4bb6c9b9b58bd185e56f82931ff1551ec3"
+  },
+  {
+    "file": "elkjs-0.11.0.tar.gz",
+    "sha256": "c9d5c93e36ad985801a4a4e2b9fdd2e0cf3c1687231507fc1d0e6a81a131f29e"
+  },
+  {
+    "file": "elkjs-0.9.3.tar.gz",
+    "sha256": "850418c89dd35dbd94ea0100a7becbc09d320c153fda4c4ea4a88c67e12121a9"
+  },
+  {
+    "file": "java/emf-common-2.12.4-sources.jar",
+    "sha256": "8dfc4e97ca8eee5474927e2b0c5f3bdbd9a52dcd5dff8c0b433b1e938b843bbe"
+  },
+  {
+    "file": "java/emf-common-2.12.4.pom",
+    "sha256": "bc4d22657ecb9c2d334421067fbd50e749d3c7d67ea1a6974f2e6db1e4939b6f"
+  },
+  {
+    "file": "java/emf-ecore-2.12.4-sources.jar",
+    "sha256": "dd3b8c1c3bd0a27c1fbba908bcf0ff21a999148da4e68b3546bcde1dbce7b13a"
+  },
+  {
+    "file": "java/emf-ecore-2.12.4.pom",
+    "sha256": "086b5b55a9eec9f42dbf4691d912410e18d29655b5c6f9bab134778c36be50bc"
+  },
+  {
+    "file": "java/guava-31.1-jre-sources.jar",
+    "sha256": "8ab1853cdaf936ec88be80c17302b7c20abafbd4f54d4fb54d7011c529e3a44a"
+  },
+  {
+    "file": "java/guava-31.1-jre.pom",
+    "sha256": "9193d07bf4f660108d7358e58b27d21b44e34e80d6734e98e21916376f270de2"
+  },
+  {
+    "file": "java/guava-gwt-31.1-jre-sources.jar",
+    "sha256": "d7e52f41ac6ea010787b5b3c8db7ffb54375d8d0c39c98c2badc9c38de7bf14b"
+  },
+  {
+    "file": "java/guava-gwt-31.1-jre.pom",
+    "sha256": "2ecbef37886c9a9a47a8a1719ee47b7d50cadc7560b114adf6266d4dbcddea42"
+  },
+  {
+    "file": "java/gwt-user-2.10.0-sources.jar",
+    "sha256": "731ff22188418a1dfaca30c8956ea107e87219ba7c4fb32d2f059ede317660b9"
+  },
+  {
+    "file": "java/gwt-user-2.10.0.pom",
+    "sha256": "0c3d5602ea8b8b37a6712e9447d6aba827f47415768bf6d49dd0fbc636d4fb97"
+  },
+  {
+    "file": "java/gwt-user-2.11.0-sources.jar",
+    "sha256": "3aa2b0f566dc1252f745b26654bc10287fced95991777af304567cb069965768"
+  },
+  {
+    "file": "java/gwt-user-2.11.0.pom",
+    "sha256": "24501808810ddde68d7c8776b52f93e3914ae58b013b7ee9846913c939088f3a"
+  },
+  {
+    "file": "java/manifest.json",
+    "sha256": "c6cba07ad67d12e09ccc043593fa70ac6630a78910e8f2a282ddf61a3d4f6a75"
+  },
+  {
+    "file": "java/org.eclipse.xtend.lib-2.28.0-sources.jar",
+    "sha256": "899f1ffb8d761f11bb5f7b74e46cdd790bd8f9bc398221cd62524eea9344d926"
+  },
+  {
+    "file": "java/org.eclipse.xtend.lib-2.28.0.pom",
+    "sha256": "ab72a2f99d4ff59a0ca8e5f73838562e0058fcc1f2d4d946de964b46e410398d"
+  },
+  {
+    "file": "java/org.eclipse.xtend.lib-2.36.0-sources.jar",
+    "sha256": "c06d94fbce7b4c831282f5ec818798e970cc893a498ed6524d9e1e47347d362f"
+  },
+  {
+    "file": "java/org.eclipse.xtend.lib-2.36.0.pom",
+    "sha256": "adc290c598ce48c636e91a2598911dc61d50c36ec043b92a516a061bd68f9661"
+  },
+  {
+    "file": "java/org.eclipse.xtext.xbase.lib-2.28.0-sources.jar",
+    "sha256": "2b35e9ccd4308f605e213371bb26f458b6a84bbd1e3a13cecaac0eba607db69f"
+  },
+  {
+    "file": "java/org.eclipse.xtext.xbase.lib-2.28.0.pom",
+    "sha256": "4ccc4781b55e4128240445c3e1d6caba09a650439c81136cbfdc812765e837da"
+  },
+  {
+    "file": "java/org.eclipse.xtext.xbase.lib-2.36.0-sources.jar",
+    "sha256": "5e06e3cfc74663d11e0debe4cce88e1134d00eba8122b90712fccbb3a5f6754a"
+  },
+  {
+    "file": "java/org.eclipse.xtext.xbase.lib-2.36.0.pom",
+    "sha256": "d3fe93f60e3d0ad01eb8f412c1c4dfe9f168de1c2be475eddedd818c8e748f36"
+  },
+  {
+    "file": "js/babel-6-LICENSE",
+    "sha256": "f533455c5981c9213689ee68bcc54fb717d8396739781b7e30c344e94323d752"
+  },
+  {
+    "file": "js/babel-core-6.26.3.tgz",
+    "sha256": "9c47b182a780f399fa0e1ce666044db5b8bb4715fbe07ab4e1b3cd0b1d043588"
+  },
+  {
+    "file": "js/babel-helpers-7.27.6.tgz",
+    "sha256": "4ad82da1cf87bd4ba3a85ec827189ed44fa0968acff21e1f98e33d278af4ec5e"
+  },
+  {
+    "file": "js/browser-pack-6.1.0.tgz",
+    "sha256": "13db68f814f0b0b943de116b36eee620f23eb857fba80c342791288cf0320dd1"
+  },
+  {
+    "file": "js/umd-3.0.3.tgz",
+    "sha256": "d4af77eb6e785d8a8a5b1ffc67490807d13b432aad1a222466d8270384b8ef91"
+  },
+  {
+    "file": "js/web-worker-1.4.1.tgz",
+    "sha256": "2428aa784a2353191525dfcd079eeb8aef3a179dc285ff6274908d51d41017c0"
+  }
+]

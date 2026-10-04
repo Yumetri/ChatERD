@@ -1,0 +1,68 @@
+---
+title: 게시 서비스 설계 연습
+config:
+  er:
+    nodeSpacing: 64
+    rankSpacing: 100
+---
+%% @db-camp-layout {"version":1,"mode":"screen","aspect":1.52,"nodes":{"USER":{"x":112,"y":132},"PROFILE":{"x":273.25,"y":549},"POST":{"x":905,"y":164},"COMMENT":{"x":1034,"y":618},"TAG":{"x":1709,"y":132},"POST_TAG":{"x":1783,"y":438}},"edges":{"[\"USER\",\"PROFILE\",\"프로필\",\"ONLY_ONE\",\"ZERO_OR_ONE\",true,0]":{"from":{"side":"S","ratio":0.5},"to":{"side":"N","ratio":0.5}},"[\"USER\",\"POST\",\"작성\",\"ONLY_ONE\",\"ZERO_OR_MORE\",false,0]":{"from":{"side":"S","ratio":0.25},"to":{"side":"N","ratio":0.5},"via":{"x":810.68,"y":228.84}},"[\"POST\",\"COMMENT\",\"댓글\",\"ONLY_ONE\",\"ZERO_OR_MORE\",false,0]":{"from":{"side":"S","ratio":0.6666666666666666},"to":{"side":"N","ratio":0.3333333333333333}},"[\"USER\",\"COMMENT\",\"댓글 작성\",\"ZERO_OR_ONE\",\"ZERO_OR_MORE\",false,0]":{"from":{"side":"S","ratio":0.75},"to":{"side":"N","ratio":0.6666666666666666},"via":{"x":961.59,"y":529.74}},"[\"COMMENT\",\"COMMENT\",\"답글\",\"ZERO_OR_ONE\",\"ZERO_OR_MORE\",false,0]":{"from":{"side":"W","ratio":0.3333333333333333},"to":{"side":"W","ratio":0.6666666666666666}},"[\"POST\",\"POST_TAG\",\"태그 연결\",\"ONLY_ONE\",\"ZERO_OR_MORE\",true,0]":{"from":{"side":"S","ratio":0.3333333333333333},"to":{"side":"N","ratio":0.6666666666666666}},"[\"TAG\",\"POST_TAG\",\"태그 참조\",\"ONLY_ONE\",\"ZERO_OR_MORE\",true,0]":{"from":{"side":"S","ratio":0.5},"to":{"side":"N","ratio":0.3333333333333333}}}}
+%% Mermaid 12 예시: 업무 그룹, 별칭, nullable(?), PK/FK/UK, 식별·비식별, 자기참조.
+%% 설계 정보 확장(@db-camp)은 명시적인 JSON 주석입니다. 일반 Mermaid도 주석으로 읽습니다.
+%% NULL 미정은 허용을 뜻하지 않습니다. 설명만으로 제약을 추론하지 않습니다.
+%% @db-camp {"table":"USER","description":"계정. tenant_id와 email의 조합이 유일하며, 각 컬럼이 개별적으로 유일하다는 뜻은 아닙니다.","columns":{"tenant_id":{"nullable":false},"email":{"nullable":false},"name":{"nullable":false},"created_at":{"nullable":false,"default":"CURRENT_TIMESTAMP"}},"unique":[{"name":"uq_user_tenant_email","columns":["tenant_id","email"]}]}
+%% @db-camp {"table":"PROFILE","description":"사용자 키를 그대로 PK로 사용하는 선택적인 프로필: 식별 관계 예시.","foreignKeys":[{"name":"fk_profile_user","columns":["user_id"],"references":{"table":"USER","columns":["id"]},"label":"프로필","onDelete":"CASCADE"}]}
+%% @db-camp {"table":"POST","description":"독립 PK를 갖는 게시글: 필수 작성자 FK라도 관계선은 비식별입니다.","columns":{"id":{"generated":"UUID 생성은 애플리케이션에서 수행"},"user_id":{"nullable":false},"title":{"nullable":false},"status":{"nullable":false,"default":"'draft'"},"created_at":{"nullable":false,"default":"CURRENT_TIMESTAMP"}},"foreignKeys":[{"name":"fk_post_author","columns":["user_id"],"references":{"table":"USER","columns":["id"]},"label":"작성","onDelete":"RESTRICT"}],"checks":["status IN ('draft', 'published')"],"indexes":[{"name":"ix_post_author_created","columns":["user_id","created_at"]}]}
+%% @db-camp {"table":"COMMENT","description":"작성자가 없는 댓글과 자기참조 답글. reviewed_at은 NULL 정책이 아직 미정입니다.","columns":{"post_id":{"nullable":false},"body":{"nullable":false}},"foreignKeys":[{"name":"fk_comment_post","columns":["post_id"],"references":{"table":"POST","columns":["id"]},"label":"댓글","onDelete":"CASCADE"},{"name":"fk_comment_author","columns":["author_id"],"references":{"table":"USER","columns":["id"]},"label":"댓글 작성","onDelete":"SET NULL"},{"name":"fk_comment_parent","columns":["parent_id"],"references":{"table":"COMMENT","columns":["id"]},"label":"답글","onDelete":"SET NULL"}]}
+%% @db-camp {"table":"TAG","columns":{"name":{"nullable":false}},"unique":[{"name":"uq_tag_name","columns":["name"]}]}
+%% @db-camp {"table":"POST_TAG","description":"N:M 연결 테이블. 두 FK가 하나의 복합 PK를 이룹니다.","columns":{"created_at":{"nullable":false,"default":"CURRENT_TIMESTAMP"}},"foreignKeys":[{"name":"fk_post_tag_post","columns":["post_id"],"references":{"table":"POST","columns":["id"]},"label":"태그 연결","onDelete":"CASCADE"},{"name":"fk_post_tag_tag","columns":["tag_id"],"references":{"table":"TAG","columns":["id"]},"label":"태그 참조","onDelete":"CASCADE"}]}
+erDiagram
+direction LR
+subgraph accounts [계정]
+    USER["사용자"] {
+        uuid id PK "사용자 식별자"
+        int tenant_id UK "복합 유일 제약의 첫 컬럼"
+        varchar(255) email UK "복합 유일 제약의 두 번째 컬럼"
+        varchar(80) name "표시 이름"
+        timestamp created_at "가입 시각"
+    }
+    PROFILE["프로필"] {
+        uuid user_id PK, FK "사용자 키와 동일"
+        text? bio "선택적인 자기소개"
+    }
+end
+subgraph publishing [게시 및 댓글]
+    POST["게시글"] {
+        uuid id PK
+        uuid user_id FK "작성자"
+        varchar(200) title "게시글 제목"
+        text? content "선택적인 본문"
+        varchar(20) status "초안 또는 게시됨"
+        timestamp created_at
+    }
+    COMMENT["댓글"] {
+        uuid id PK
+        uuid post_id FK
+        uuid? author_id FK "탈퇴 후 작성자 없음 허용"
+        uuid? parent_id FK "최상위 댓글에는 부모 없음"
+        text body "댓글 내용"
+        timestamp reviewed_at "NULL 정책 미정 예시"
+    }
+end
+subgraph tagging [태그]
+    TAG["태그"] {
+        int id PK
+        varchar(40) name UK
+    }
+    POST_TAG["게시글 태그"] {
+        uuid post_id PK, FK
+        int tag_id PK, FK
+        timestamp created_at
+    }
+end
+USER ||--o| PROFILE : "프로필"
+USER ||..o{ POST : "작성"
+POST ||..o{ COMMENT : "댓글"
+USER |o..o{ COMMENT : "댓글 작성"
+COMMENT |o..o{ COMMENT : "답글"
+POST ||--o{ POST_TAG : "태그 연결"
+TAG ||--o{ POST_TAG : "태그 참조"
