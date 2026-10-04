@@ -4,6 +4,16 @@
 
 AI와 함께 Mermaid ERD를 설계하고 수정하는 스킬과 로컬 뷰어입니다.
 
+## 실제 화면
+
+샘플 편집 화면
+
+![샘플 ERD 편집 화면](docs/images/sample-editor.jpg)
+
+다운로드한 PNG 결과
+
+![샘플 ERD PNG 결과](docs/images/sample-export.png)
+
 ## 시작하기
 
 [Node.js](https://nodejs.org/) 22.12 이상을 설치한 뒤 실행하세요.
