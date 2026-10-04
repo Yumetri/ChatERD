@@ -6,13 +6,13 @@ AI와 함께 Mermaid ERD를 설계하고 수정하는 스킬과 로컬 뷰어입
 
 ## 실제 화면
 
-샘플 편집 화면
+[샘플 편집 화면 · 원본 보기](docs/images/sample-editor.jpg)
 
-![샘플 ERD 편집 화면](docs/images/sample-editor.jpg)
+[![샘플 ERD 편집 화면](docs/images/sample-editor.jpg)](docs/images/sample-editor.jpg)
 
-다운로드한 PNG 결과
+[PNG 원본 · 4596×2044](docs/images/sample-export.png) · [SVG 다운로드](docs/images/sample-export.svg)
 
-![샘플 ERD PNG 결과](docs/images/sample-export.png)
+[![샘플 ERD PNG 결과](docs/images/sample-export.png)](docs/images/sample-export.png)
 
 ## 시작하기
 
