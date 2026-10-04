@@ -56,7 +56,7 @@ async function layoutModel(model,options,layoutDirection=model.direction){
 }
 function table(svg,m,x,y,keySection){
     const e=m.entity,g=element('g',{class:'entity','data-entity':e.name,transform:`translate(${x},${y})`,tabindex:0,role:'button','aria-label':`${e.name} 테이블 상세`});
-    if(m.style.fill)g.style.setProperty('--surface',m.style.fill);if(m.style.stroke)g.style.setProperty('--border',m.style.stroke);if(m.style.color)g.style.setProperty('--text',m.style.color);
+    if(m.style.fill)g.style.setProperty('--table-surface',m.style.fill);if(m.style.stroke)g.style.setProperty('--border',m.style.stroke);if(m.style.color)g.style.setProperty('--text',m.style.color);
     g.append(element('rect',{width:m.width,height:m.height,rx:5,class:'table-base'}));
     g.append(element('rect',{width:m.width,height:m.titleHeight,rx:5,class:'table-heading'}));
     text(g,e.title,12,24,m.width-24,m.size+2,true,'table-title');
@@ -90,8 +90,8 @@ function marker(svg,p,q,card,edge,end){
 }
 function svgStyle(svg){svg.append(element('style',{},`svg[data-view]{font-family:${FONT};fill:var(--text)}.canvas{fill:var(--background)}
  .group-fill{fill:var(--surface);fill-opacity:.45;stroke:none}.group-box{fill:none;stroke:var(--border);stroke-dasharray:5 4}.group-title{fill:var(--muted);font-weight:600}
- .table-base{fill:var(--surface);stroke:var(--border)}.table-heading,.column-heading{fill:var(--header)}.table-title,.key-text{fill:var(--accent)}.physical-name{fill:var(--muted)}
- .data-row{fill:var(--surface)}.alternate-row{fill:var(--alternate)}.grid-line{stroke:var(--border);stroke-width:.6}.pk-divider{stroke:var(--line);stroke-width:2}
+ .table-base{fill:var(--table-surface);stroke:var(--border)}.table-heading,.column-heading{fill:var(--table-header)}.table-title,.key-text{fill:var(--accent)}.physical-name{fill:var(--muted)}
+ .data-row{fill:var(--table-surface)}.alternate-row{fill:var(--table-alternate)}.grid-line{stroke:var(--border);stroke-width:.6}.pk-divider{stroke:var(--line);stroke-width:2}
  .relationship{fill:none;stroke:var(--line);stroke-width:1.5}.relationship-hit{fill:none;stroke:transparent;stroke-width:14;pointer-events:stroke;cursor:pointer}.cardinality{stroke:var(--line);stroke-width:1.5;fill:none;pointer-events:none}.cardinality circle{fill:var(--background)}
  .edge-label-bg{fill:var(--background)}.edge-label{fill:var(--text)}.entity{cursor:pointer}.entity:focus .table-base{stroke:var(--accent);stroke-width:3}`));}
 export function geometryBounds(geometry){

@@ -26,7 +26,7 @@ main{display:grid;grid-template-columns:var(--source-width,34%) 8px minmax(0,1fr
 .interaction-status{height:36px;flex:none;padding:3px 14px;display:flex;align-items:center}
 #layout-hint{font-size:11px;color:var(--muted);line-height:15px;max-height:30px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .workspace{position:relative;flex:1;min-height:0;display:flex;overflow:hidden}
-#canvas{flex:1;min-width:0;position:relative;overflow:hidden;touch-action:none;background:var(--background);cursor:grab}#canvas:active{cursor:grabbing}
+#canvas{flex:1;min-width:0;position:relative;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;background:var(--background);cursor:grab}#canvas:active{cursor:grabbing}
 #diagram{position:absolute;transform-origin:0 0}#diagram>svg{display:block;max-width:none}
 #empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);pointer-events:none}#empty[hidden]{display:none}
 aside{width:320px;background:var(--surface);border-left:1px solid color-mix(in srgb,var(--border) 35%,transparent);overflow:auto;padding:16px}aside[hidden]{display:none}
