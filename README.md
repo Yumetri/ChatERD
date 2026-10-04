@@ -32,7 +32,10 @@ node runtime/cli.mjs preview erds/my-schema.mmd
 
 ## 스킬 사용
 
-[`db-draw`](skills/db-draw/SKILL.md)로 ERD를 그리고 수정하고, [`db-discuss`](skills/db-discuss/SKILL.md)로 설계를 토론하세요. 요청에 대상 `.mmd` 파일 경로를 함께 전달합니다.
+- [`db-draw`](skills/db-draw/SKILL.md): 요청한 테이블·컬럼·관계를 수정하고 다이어그램에 반영합니다.
+- [`db-discuss`](skills/db-discuss/SKILL.md): 현재 ERD의 관계·키·제약을 검토하고 설계 대안과 트레이드오프를 설명합니다. 파일은 수정하지 않습니다.
+
+스킬 이름과 대상 `.mmd` 파일 경로, 요청을 함께 전달하세요.
 
 ## 라이선스
 
