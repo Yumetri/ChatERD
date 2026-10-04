@@ -2,7 +2,7 @@
 
 # ChatERD
 
-Mermaid ERD 파일을 편집하고 다이어그램으로 확인하는 로컬 도구입니다. **Codex 없이도 사용할 수 있습니다.**
+AI와 함께 Mermaid ERD를 설계하고 수정하는 스킬과 로컬 뷰어입니다.
 
 ## 시작하기
 
@@ -32,9 +32,9 @@ node runtime/cli.mjs preview erds/my-schema.mmd
 
 [추가 설계 정보 작성법](references/schema-metadata.md)
 
-## AI와 함께 쓰기
+## 스킬 사용
 
-다른 AI 도구로 `.mmd` 파일을 수정해도 뷰어에 반영됩니다. 내장 `draw`·`discuss` 명령과 [`db-draw`](skills/db-draw/SKILL.md)·[`db-discuss`](skills/db-discuss/SKILL.md) 스킬은 Codex용 선택 기능입니다.
+[`db-draw`](skills/db-draw/SKILL.md)로 ERD를 그리고 수정하고, [`db-discuss`](skills/db-discuss/SKILL.md)로 설계를 토론하세요. 요청에 대상 `.mmd` 파일 경로를 함께 전달합니다.
 
 ## 라이선스
 
