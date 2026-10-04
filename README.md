@@ -21,8 +21,6 @@ node runtime/cli.mjs preview examples/sample.mmd
 node runtime/cli.mjs preview erds/my-schema.mmd
 ```
 
-개인 ERD 파일은 `erds/`에 넣으면 Git에서 제외됩니다.
-
 ## 주요 기능
 
 - 코드 편집과 자동 저장, 외부 파일 변경 시 자동 새로고침
