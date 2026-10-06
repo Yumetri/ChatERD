@@ -1,3 +1,4 @@
+import {foreignKeyReferences} from './foreign-keys.mjs';
 const bindingsCache=new WeakMap();
 const connectionsCache=new WeakMap();
 export const FIELD_PORT_SPACING=26;
@@ -33,19 +34,9 @@ export function fieldOffsets({attrs,titleHeight,headerHeight,rowHeights}) {
 
 export function foreignKeyBindings(model) {
     if(bindingsCache.has(model))return bindingsCache.get(model);
-    const pairs=new Map();
-    for(const entity of model.entities)for(const fk of entity.metadata?.foreignKeys||[]) {
-        const key=JSON.stringify([fk.references.table,entity.name]);
-        if(!pairs.has(key))pairs.set(key,[]);pairs.get(key).push(fk);
-    }
     const result=new Map();
-    for(const r of model.relationships) {
-        const forward=(pairs.get(JSON.stringify([r.a,r.b]))||[]).filter(fk=>!fk.label||fk.label===r.label);
-        const reverse=r.a===r.b?[]:(pairs.get(JSON.stringify([r.b,r.a]))||[]).filter(fk=>!fk.label||fk.label===r.label);
-        // A relation without an unambiguous FK mapping remains table-attached.
-        if(forward.length+reverse.length!==1)continue;
-        const fk=forward[0]||reverse[0];
-        result.set(r.id,forward.length?{from:fk.references.columns,to:fk.columns}:{from:fk.columns,to:fk.references.columns});
+    for(const [id,{fk,forward}] of foreignKeyReferences(model)) {
+        result.set(id,forward?{from:fk.references.columns,to:fk.columns}:{from:fk.columns,to:fk.references.columns});
     }
     bindingsCache.set(model,result);return result;
 }

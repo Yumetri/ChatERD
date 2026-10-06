@@ -1,6 +1,7 @@
 // Extension data is explicit JSON in ordinary Mermaid comments. It stays in
 // the same source/revision/semantic signature; never infer missing constraints.
 import {readPlacement} from './placement.mjs';
+import {foreignKeyGroups} from './foreign-keys.mjs';
 export function metadataFrom(source) {
     const tables = Object.create(null);
     for (const line of source.split('\n')) {
@@ -102,7 +103,8 @@ export function reviewModel(model) {
 }
 export function keyLabel(entity,a) {
     const groups=(entity.metadata.unique||[]).filter(u=>u.columns.includes(a.name)).map(u=>`UK:${u.name}`);
-    return [...a.keys.filter(k=>k!=='UK'||!groups.length),...groups].join(', ');
+    const foreign=foreignKeyGroups(entity).filter(({fk})=>fk.columns.includes(a.name)).map(({id})=>id);
+    return [...a.keys.flatMap(k=>k==='UK'&&groups.length?[]:k==='FK'&&foreign.length?foreign:[k]),...groups].join(', ');
 }
 export function selectView(model, view='all') {
     if(view==='all') return model;

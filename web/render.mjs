@@ -2,6 +2,7 @@ import mermaid from 'mermaid';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import {load,JSON_SCHEMA} from 'js-yaml';
 import {extractModel,semanticSignature,columnInfo,keyLabel,selectView} from './model.mjs';
+import {foreignKeyGroups,foreignKeySummary,relationshipLabel} from './foreign-keys.mjs';
 import {applyTheme} from './theme.mjs';
 import {absoluteEdges,cardinalityGraph,cardinalityEdges,GROUP_PADDING,cardinalityAreas} from './layout.mjs';
 import {placeGeometry,packedGeometry} from './routing.mjs';
@@ -35,7 +36,11 @@ function tableMetrics(entity,keySection,connections=new Map()){
         return Math.max(Math.max(...row.map((v,i)=>lines(v,widths[i]-24,size,i===2).length))*(size+5)+18,count>1?count*FIELD_PORT_SPACING+18:0);
     });
     const width=entity.attributes.length?widths.reduce((a,b)=>a+b,0):Math.max(160,measure(entity.title,size+2,true)+32);
-    const value={entity,attrs,values,widths,titleHeight,headerHeight,rowHeights,width,height:titleHeight+(attrs.length?headerHeight+rowHeights.reduce((a,b)=>a+b,0):0),size,style};
+    const bodyHeight=titleHeight+(attrs.length?headerHeight+rowHeights.reduce((a,b)=>a+b,0):0);
+    const fkSummaries=foreignKeyGroups(entity).filter(({fk})=>fk.columns.length>1).map(group=>({id:group.id,text:foreignKeySummary(group)}));
+    const fkRowHeights=fkSummaries.map(({text})=>lines(text,width-24,size).length*(size+5)+8);
+    const footerHeight=fkSummaries.length?size+24+fkRowHeights.reduce((a,b)=>a+b,0):0;
+    const value={entity,attrs,values,widths,titleHeight,headerHeight,rowHeights,width,bodyHeight,fkSummaries,fkRowHeights,height:bodyHeight+footerHeight,size,style};
     const cache=entries||new Map();cache.set(key,value);metricsCache.set(entity,cache);return value;
 }
 const direction=d=>({TB:'DOWN',BT:'UP',LR:'RIGHT',RL:'LEFT'}[d]||'DOWN');
@@ -46,7 +51,7 @@ async function layoutModel(model,options,layoutDirection=model.direction){
     for(const e of model.entities){const m=metrics.get(e.name);(children.get(e.parent)||children.get('root')).push({id:e.name,width:m.width,height:m.height});}
     const groupPadding=`[${Object.entries(GROUP_PADDING).map(([side,size])=>`${side}=${size}`).join(',')}]`;
     for(const g of model.groups){const node={id:g.id,children:children.get(g.id),layoutOptions:{'elk.padding':groupPadding,'elk.direction':direction(layoutDirection)}};(children.get(g.parent)||children.get('root')).push(node);}
-    const edges=model.relationships.map(r=>({id:r.id,sources:[r.a],targets:[r.b],labels:[{text:r.label,width:measure(r.label,13)+16,height:26}]}));
+    const edges=model.relationships.map(r=>{const label=relationshipLabel(model,r);return {id:r.id,sources:[r.a],targets:[r.b],labels:[{text:label,width:measure(label,13)+16,height:26}]};});
     const graph={id:'root',children:children.get('root'),edges,layoutOptions:{'elk.algorithm':'layered','elk.direction':direction(layoutDirection),
         'elk.hierarchyHandling':'INCLUDE_CHILDREN','elk.edgeRouting':'ORTHOGONAL','elk.spacing.nodeNode':String(model.visual?.nodeSpacing||48),
         'elk.layered.spacing.nodeNodeBetweenLayers':String(model.visual?.rankSpacing||96),'elk.spacing.edgeNode':'28',
@@ -72,7 +77,19 @@ function table(svg,m,x,y,keySection){
             let x=0;row.forEach((v,i)=>{const role=columns[i][0],centered=role==='keys'||role==='nullable',cell=element('g',{'data-column':role,'data-field':m.attrs[index].name});text(cell,v,x+(centered?m.widths[i]/2:12),rowY+m.size+9,m.widths[i]-24,m.size,i===2,i===2?'key-text':'',centered?'middle':'start');g.append(cell);x+=m.widths[i];});
             rowY+=height;g.append(element('line',{x1:0,x2:m.width,y1:rowY,y2:rowY,class:'grid-line'}));
         });
-        let x=0;m.widths.slice(0,-1).forEach(w=>{x+=w;g.append(element('line',{x1:x,x2:x,y1:m.titleHeight,y2:m.height,class:'grid-line'}));});
+        let x=0;m.widths.slice(0,-1).forEach(w=>{x+=w;g.append(element('line',{x1:x,x2:x,y1:m.titleHeight,y2:m.bodyHeight,class:'grid-line'}));});
+    }
+    if(m.fkSummaries.length){
+        const footer=element('g',{class:'fk-summary','aria-label':'복합 외래키 컬럼 묶음'});
+        footer.append(element('line',{x1:0,x2:m.width,y1:m.bodyHeight,y2:m.bodyHeight,class:'grid-line'}));
+        text(footer,'복합 외래키 컬럼 묶음',12,m.bodyHeight+m.size+9,m.width-24,m.size,true,'fk-summary-title');
+        let rowY=m.bodyHeight+m.size+20;
+        m.fkSummaries.forEach((summary,index)=>{
+            text(footer,summary.text,12,rowY+m.size,m.width-24,m.size,false,'fk-summary-entry');
+            footer.lastChild.setAttribute('data-fk-group',summary.id);
+            rowY+=m.fkRowHeights[index];
+        });
+        g.append(footer);
     }
     svg.append(g);
 }
@@ -90,7 +107,7 @@ function marker(svg,p,q,card,edge,end){
 }
 function svgStyle(svg){svg.append(element('style',{},`svg[data-view]{font-family:${FONT};fill:var(--text)}.canvas{fill:var(--background)}
  .group-fill{fill:var(--surface);fill-opacity:.45;stroke:none}.group-box{fill:none;stroke:var(--border);stroke-dasharray:5 4}.group-title{fill:var(--muted);font-weight:600}
- .table-base{fill:var(--table-surface);stroke:var(--border)}.table-heading,.column-heading{fill:var(--table-header)}.table-title,.key-text{fill:var(--accent)}.physical-name{fill:var(--muted)}
+ .table-base{fill:var(--table-surface);stroke:var(--border)}.table-heading,.column-heading{fill:var(--table-header)}.table-title,.key-text{fill:var(--accent)}.physical-name,.fk-summary-title{fill:var(--muted)}
  .data-row{fill:var(--table-surface)}.alternate-row{fill:var(--table-alternate)}.grid-line{stroke:var(--border);stroke-width:.6}.pk-divider{stroke:var(--line);stroke-width:2}
  .relationship{fill:none;stroke:var(--line);stroke-width:1.5}.relationship-hit{fill:none;stroke:transparent;stroke-width:14;pointer-events:stroke;cursor:pointer}.cardinality{stroke:var(--line);stroke-width:1.5;fill:none;pointer-events:none}.cardinality circle{fill:var(--background)}
  .edge-label-bg{fill:var(--background)}.edge-label{fill:var(--text)}.entity{cursor:pointer}.entity:focus .table-base{stroke:var(--accent);stroke-width:3}`));}
@@ -116,7 +133,7 @@ export function geometrySVG(fullModel,geometry,theme='light',{view='all',keySect
     for(const [name,g]of groupPositions){const title=model.groups.find(s=>s.id===name)?.title||name,attrs={x:g.x,y:g.y,width:g.width,height:g.height,rx:8};svg.append(element('rect',{...attrs,class:'group-fill','data-layout-group':name}));svg.append(element('rect',{...attrs,class:'group-box','data-group':name,...(areas.length?{mask:`url(#${maskId})`}:{})}));text(svg,title,g.x+16,g.y+25,g.width-32,14,true,'group-title');svg.lastChild.setAttribute('data-layout-group',name);}
     const rels=new Map(model.relationships.map(r=>[r.id,r]));
     const edges=geometry.edges,symbols=[];
-    for(const edge of edges){const r=rels.get(edge.id);for(const section of edge.sections||[]){const points=[section.startPoint,...(section.bendPoints||[]),section.endPoint],d=pathData(section);svg.append(element('path',{d,class:'relationship','stroke-dasharray':r.identifying?'none':'6 4','data-relation':r.id}));svg.append(element('path',{d,class:'relationship-hit','data-relation':r.id,tabindex:0,role:'button','aria-label':`${r.a}와 ${r.b}: ${r.label} 관계선 조절`}));symbols.push([points[0],points[1],r.cardA,r.id,'from'],[points.at(-1),points.at(-2),r.cardB,r.id,'to']);}for(const label of edge.labels||[]){if(label.x===undefined)continue;svg.append(element('rect',{x:label.x,y:label.y,width:label.width,height:label.height,rx:4,class:'edge-label-bg','data-layout-edge':r.id}));text(svg,r.label,label.x+8,label.y+18,label.width-16,13,false,'edge-label');svg.lastChild.setAttribute('data-layout-edge',r.id);}}
+    for(const edge of edges){const r=rels.get(edge.id),displayLabel=relationshipLabel(model,r);for(const section of edge.sections||[]){const points=[section.startPoint,...(section.bendPoints||[]),section.endPoint],d=pathData(section);svg.append(element('path',{d,class:'relationship','stroke-dasharray':r.identifying?'none':'6 4','data-relation':r.id}));svg.append(element('path',{d,class:'relationship-hit','data-relation':r.id,tabindex:0,role:'button','aria-label':`${r.a}와 ${r.b}: ${displayLabel} 관계선 조절`}));symbols.push([points[0],points[1],r.cardA,r.id,'from'],[points.at(-1),points.at(-2),r.cardB,r.id,'to']);}for(const label of edge.labels||[]){if(label.x===undefined)continue;svg.append(element('rect',{x:label.x,y:label.y,width:label.width,height:label.height,rx:4,class:'edge-label-bg','data-layout-edge':r.id}));text(svg,displayLabel,label.x+8,label.y+18,label.width-16,13,false,'edge-label');svg.lastChild.setAttribute('data-layout-edge',r.id);}}
     for(const [p,q,card,edge,end] of symbols)marker(svg,p,q,card,edge,end);
     for(const [name,p]of positions)table(svg,metrics.get(name),p.x,p.y,keySection);
     return {svg:new XMLSerializer().serializeToString(svg),width,height};

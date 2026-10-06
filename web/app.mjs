@@ -7,6 +7,7 @@ import {tags} from '@lezer/highlight';
 import {applyTheme,preferredTheme} from './theme.mjs';
 import {renderSnapshot,drawModel,rethemeSnapshot,download} from './render.mjs';
 import {columnInfo,keyLabel} from './model.mjs';
+import {foreignKeyGroups,foreignKeyGroupLabel,relationshipLabel} from './foreign-keys.mjs';
 import {formatSource} from './format.mjs';
 import {layoutControls} from './layout-controls.mjs';
 import {sourcePanel} from './source-panel.mjs';
@@ -48,9 +49,9 @@ function inspect(name){
         infoText(target,'h3','키와 제약');const pk=e.attributes.filter(a=>a.keys.includes('PK')).map(a=>a.name);infoText(target,'p',pk.length?`PRIMARY KEY (${pk.join(', ')})`:'PK 미정');
         for(const u of e.metadata.unique||[])infoText(target,'p',`${u.name}: UNIQUE (${u.columns.join(', ')})`);
         for(const a of e.attributes.filter(a=>a.keys.includes('UK')&&!(e.metadata.unique||[]).some(u=>u.columns.includes(a.name))))infoText(target,'p',`UNIQUE (${a.name})`);
-        for(const fk of e.metadata.foreignKeys||[]){infoText(target,'p',`${fk.name}: (${fk.columns.join(', ')}) → ${fk.references.table} (${fk.references.columns.join(', ')})`);if(fk.onDelete||fk.onUpdate)infoText(target,'p',`DELETE ${fk.onDelete||'미정'} · UPDATE ${fk.onUpdate||'미정'}`);const button=infoText(target,'button',`${fk.references.table} 참조 대상 보기`);button.className='reference-button';button.onclick=()=>inspect(fk.references.table);}
+        for(const group of foreignKeyGroups(e)){const {fk}=group;infoText(target,'p',`[${foreignKeyGroupLabel(group)}] ${fk.name}: (${fk.columns.join(', ')}) → ${fk.references.table} (${fk.references.columns.join(', ')})`);if(fk.onDelete||fk.onUpdate)infoText(target,'p',`DELETE ${fk.onDelete||'미정'} · UPDATE ${fk.onUpdate||'미정'}`);const button=infoText(target,'button',`${fk.references.table} 참조 대상 보기`);button.className='reference-button';button.onclick=()=>inspect(fk.references.table);}
         for(const check of e.metadata.checks||[])infoText(target,'p',`CHECK (${check})`);for(const index of e.metadata.indexes||[])infoText(target,'p',`${index.name}: INDEX (${index.columns.join(', ')})`);
-        infoText(target,'h3','관계');for(const r of full.model.relationships.filter(r=>r.a===name||r.b===name))infoText(target,'p',`${r.a} → ${r.b}: ${r.label} · ${r.identifying?'식별':'비식별'} · ${({ONLY_ONE:'1',ZERO_OR_ONE:'0..1',ONE_OR_MORE:'1..N',ZERO_OR_MORE:'0..N'})[r.cardA]||'미정'} / ${({ONLY_ONE:'1',ZERO_OR_ONE:'0..1',ONE_OR_MORE:'1..N',ZERO_OR_MORE:'0..N'})[r.cardB]||'미정'}`);
+        infoText(target,'h3','관계');for(const r of full.model.relationships.filter(r=>r.a===name||r.b===name))infoText(target,'p',`${r.a} → ${r.b}: ${relationshipLabel(full.model,r)} · ${r.identifying?'식별':'비식별'} · ${({ONLY_ONE:'1',ZERO_OR_ONE:'0..1',ONE_OR_MORE:'1..N',ZERO_OR_MORE:'0..N'})[r.cardA]||'미정'} / ${({ONLY_ONE:'1',ZERO_OR_ONE:'0..1',ONE_OR_MORE:'1..N',ZERO_OR_MORE:'0..N'})[r.cardB]||'미정'}`);
     }
     infoText(target,'h3','검토 힌트');const warnings=full.model.warnings.filter(w=>!e||w.includes(e.name));if(!warnings.length)infoText(target,'p','명시된 제약에서 검토 힌트가 없습니다. 설계의 정확성을 자동으로 증명한 것은 아닙니다.');else {const list=document.createElement('ul');warnings.forEach(w=>infoText(list,'li',w));target.append(list);}
 }
