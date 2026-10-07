@@ -64,7 +64,7 @@ export function validateMetadata(model, extra) {
             if(key==='foreignKeys') {
                 const target = byName.get(c.references?.table);
                 fail(target && Array.isArray(c.references.columns) && c.references.columns.length===c.columns.length && c.references.columns.every(f=>target.attributes.some(a=>a.name===f)),`${name}.${c.name} 참조 대상 또는 컬럼 대응 오류`);
-                fail(c.columns.every(f=>columns.get(f).keys.includes('FK')),`${name}.${c.name}은 FK 표기가 필요합니다.`);
+                fail(c.columns.every(f=>columns.get(f).keys.includes('FK') || (c.columns.length>1 && columns.get(f).keys.includes('PK'))),`${name}.${c.name}은 FK 표기가 필요합니다.`);
                 for(const k of ['label','onDelete','onUpdate']) if(c[k]!==undefined) fail(typeof c[k]==='string',`${name}.${c.name} ${k}는 문자열입니다.`);
             }
         }

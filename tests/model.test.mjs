@@ -14,4 +14,15 @@ test('layout metadata is parsed but cannot change the design semantic signature'
 test('metadata mistakes reject missing columns, inconsistent nullability, and duplicate tables',()=>{for(const m of [{table:'MISSING'},{table:'ACCOUNT',columns:{missing:{nullable:false}}},{table:'ACCOUNT',columns:{id:{nullable:true}}},{table:'ACCOUNT',columns:{bio:{nullable:false}}},{table:'ACCOUNT',unique:[{name:'uq',columns:['missing']}]},{table:'ACCOUNT',other:1}])assert.throws(()=>extractModel(db(),source(m)),/설계 정보 오류/);assert.throws(()=>metadataFrom(`${source(meta())}\n${source(meta())}`),/중복/);assert.throws(()=>metadataFrom('%% @db-camp {broken'),/JSON 오류/);});
 test('metadata names cannot mutate object prototypes',()=>{const m=metadataFrom('%% @db-camp {"table":"__proto__","description":"plain data"}');assert.equal(Object.getPrototypeOf(m),null);assert.equal(m.__proto__.description,'plain data');assert.equal({}.description,undefined);});
 test('FK mappings validate counts and targets; advisory review is not a schema mutation',()=>{const m={table:'ENTRY',foreignKeys:[{name:'fk_account',columns:['account_id'],references:{table:'ACCOUNT',columns:['id']},label:'작성'}]};const model=extractModel(db(),source(m));assert(!model.warnings.some(w=>w.includes('FK 참조 컬럼')));m.foreignKeys[0].references.columns=['missing'];assert.throws(()=>extractModel(db(),source(m)),/참조 대상/);});
+test('a PK-only column can participate in an explicit composite FK without changing its displayed key',()=>{
+    const m={table:'ENTRY',foreignKeys:[{name:'fk_account_owner',columns:['account_id','id'],references:{table:'ACCOUNT',columns:['id','tenant']},label:'작성'}]};
+    const model=extractModel(db(),source(m)),entry=model.entities.find(e=>e.name==='ENTRY');
+    assert.equal(keyLabel(entry,entry.attributes[0]),'PK');
+    assert.equal(keyLabel(entry,entry.attributes[1]),'FK1');
+    assert.deepEqual(entry.metadata.foreignKeys,m.foreignKeys);
+    const unmarked=db();unmarked.getEntities().get('ENTRY').attributes[0].keys=[];
+    assert.throws(()=>extractModel(unmarked,source(m)),/FK 표기/);
+    m.foreignKeys[0].columns=['id'];m.foreignKeys[0].references.columns=['id'];
+    assert.throws(()=>extractModel(db(),source(m)),/FK 표기/);
+});
 test('subject and neighbor views preserve the full model and omit out-of-view edges explicitly',()=>{const full=extractModel(db(),source(meta()));const subject=selectView(full,'group:accounts');assert.equal(subject.entities.length,1);assert.equal(subject.relationships.length,0);assert.equal(selectView(full,'entity:ACCOUNT').entities.length,2);assert.equal(full.entities.length,2);assert.throws(()=>selectView(full,'group:missing'),/테이블이 없습니다/);});
